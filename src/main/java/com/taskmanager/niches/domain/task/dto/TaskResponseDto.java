@@ -7,6 +7,7 @@ import com.taskmanager.niches.domain.users.UserResponseDto;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,6 +22,6 @@ public class TaskResponseDto {
     private Priority priority;
     private StatusTaskEntity status;
     private LocalDate dueDate;
-    private LocalDate.now createdDate;
-    private UserResponseDto user;
+    private LocalDateTime createdDate;
+    private Integer userId;
 }

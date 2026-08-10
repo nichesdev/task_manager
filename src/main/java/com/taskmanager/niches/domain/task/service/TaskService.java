@@ -50,7 +50,5 @@ public class TaskService {
                 .createdDate(savedTask.getCreatedDate())
                 .userId(savedTask.getUser().getId())
                 .build();
-
-
     }
 }
