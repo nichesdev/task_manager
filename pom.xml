@@ -8,7 +8,7 @@
 		<version>4.1.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.task</groupId>
+	<groupId>com.taskmanager</groupId>
 	<artifactId>niches</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.12</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
