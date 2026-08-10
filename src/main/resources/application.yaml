@@ -14,4 +14,5 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        default_schema: app
         format_sql: true

@@ -1,5 +1,6 @@
 package com.taskmanager.niches.domain.users;
 
+import com.taskmanager.niches.exception.BadRequestException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createUser(@Valid @RequestBody UserRequestDto userRequestDto){
+    public void createUser(@Valid @RequestBody UserRequestDto userRequestDto) throws BadRequestException {
         userService.createUser(userRequestDto);
     }
-
-
 }
