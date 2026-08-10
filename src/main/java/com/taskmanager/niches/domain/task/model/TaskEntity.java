@@ -1,5 +1,6 @@
 package com.taskmanager.niches.domain.task.model;
 
+import com.taskmanager.niches.domain.category.CategoryEntity;
 import com.taskmanager.niches.domain.users.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,4 +40,8 @@ public class TaskEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity category;
 }
