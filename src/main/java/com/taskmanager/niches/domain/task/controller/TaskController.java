@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/tasks")
 @RequiredArgsConstructor
@@ -23,5 +25,11 @@ public class TaskController {
     @ResponseStatus(HttpStatus.CREATED)
     public TaskResponseDto createTask(@Valid @RequestBody TaskRequestDto taskRequestDto) throws BadRequestException, NotFoundException {
         return taskService.createTask(taskRequestDto);
+    }
+
+    @GetMapping("/user/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TaskResponseDto> findAllTasks() {
+
     }
 }
