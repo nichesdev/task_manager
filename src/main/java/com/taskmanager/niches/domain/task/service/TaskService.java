@@ -1,5 +1,6 @@
 package com.taskmanager.niches.domain.task.service;
 
+import com.taskmanager.niches.domain.category.CategoryRepository;
 import com.taskmanager.niches.domain.task.dto.TaskRequestDto;
 import com.taskmanager.niches.domain.task.dto.TaskResponseDto;
 import com.taskmanager.niches.domain.task.model.TaskEntity;
@@ -19,6 +20,7 @@ import java.util.List;
 public class TaskService {
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final CategoryRepository categoryRepository;
 
     public TaskResponseDto createTask(TaskRequestDto taskRequestDto) throws NotFoundException, BadRequestException {
         UserEntity user = userRepository.findById(taskRequestDto.getUserId())
@@ -70,5 +72,19 @@ public class TaskService {
                         .userId(task.getUser().getId())
                         .build())
                 .toList();
+    }
+    public List<TaskResponseDto> findAllByUserIdAndCategoryId (Integer userId, Integer categoryId) throws NotFoundException {
+        if(!userRepository.existsById(userId)) {
+            throw new NotFoundException("Usuário não encontrado");
+        } else if(!categoryRepository.existsById(categoryId)) {
+            throw new NotFoundException("Categoria não encontrada");
+        }
+        List<TaskEntity> tasks = taskRepository.findAllByUserIdAndCategoryId(userId, categoryId);
+
+        return tasks.stream()
+                .map(task -> TaskResponseDto.builder()
+                        .id(task.getId())
+                        .title(task.getTitle())
+
     }
 }

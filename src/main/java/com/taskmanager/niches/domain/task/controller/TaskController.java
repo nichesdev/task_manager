@@ -34,4 +34,11 @@ public class TaskController {
         List<TaskResponseDto> tasks = taskService.findAllByUserId(userId);
         return ResponseEntity.ok(tasks);
     }
+
+    @GetMapping("/user/{userId}/category/{categoryId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TaskResponseDto>> getByUserIdAndCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) throws NotFoundException {
+        List<TaskResponseDto> tasks = taskService.findAllByUserIdAndCategoryId(userId,categoryId);
+        return  ResponseEntity.ok(tasks);
+    }
 }
