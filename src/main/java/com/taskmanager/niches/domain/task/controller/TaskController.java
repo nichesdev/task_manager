@@ -8,6 +8,7 @@ import com.taskmanager.niches.exception.NotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,8 @@ public class TaskController {
 
     @GetMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<TaskResponseDto> findAllTasks() {
-
+    public ResponseEntity<List<TaskResponseDto>> getAllByUserId(@PathVariable Integer userId) throws NotFoundException {
+        List<TaskResponseDto> tasks = taskService.findAllByUserId(userId);
+        return ResponseEntity.ok(tasks);
     }
 }

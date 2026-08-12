@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -50,5 +51,24 @@ public class TaskService {
                 .createdDate(savedTask.getCreatedDate())
                 .userId(savedTask.getUser().getId())
                 .build();
+    }
+    public List<TaskResponseDto> findAllByUserId(Integer userId) throws NotFoundException {
+        if(!userRepository.existsById(userId)) {
+            throw new NotFoundException("Usuário não encontrado.");
+        }
+        List<TaskEntity> tasks = taskRepository.findAllByUserId(userId);
+
+        return tasks.stream()
+                .map(task -> TaskResponseDto.builder()
+                        .id(task.getId())
+                        .title(task.getTitle())
+                        .description(task.getDescription())
+                        .priority(task.getPriority())
+                        .status(task.getStatus())
+                        .dueDate(task.getDueDate())
+                        .createdDate(task.getCreatedDate())
+                        .userId(task.getUser().getId())
+                        .build())
+                .toList();
     }
 }
