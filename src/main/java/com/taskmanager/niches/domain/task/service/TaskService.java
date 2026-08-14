@@ -102,12 +102,7 @@ public class TaskService {
                         .dueDate(task.getDueDate())
                         .createdDate(task.getCreatedDate())
                         .userId(task.getUser().getId())
-
-                        .category(task.getCategory() != null ? CategoryResponseDto.builder()
-                                .id(task.getCategory().getId())
-                                .name(task.getCategory().getName())
-                                .userId(task.getCategory().getUser().getId())
-                                .build() : null)
+                        .categoryId(task.getCategory() != null ? task.getCategory().getId() : null)
                         .build())
                 .toList();
     }
