@@ -24,4 +24,5 @@ public class TaskResponseDto {
     private LocalDate dueDate;
     private LocalDateTime createdDate;
     private Integer userId;
+    private Integer categoryId;
 }

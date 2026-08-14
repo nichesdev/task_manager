@@ -1,6 +1,8 @@
 package com.taskmanager.niches.domain.task.service;
 
+import com.taskmanager.niches.domain.category.CategoryEntity;
 import com.taskmanager.niches.domain.category.CategoryRepository;
+import com.taskmanager.niches.domain.category.CategoryResponseDto;
 import com.taskmanager.niches.domain.task.dto.TaskRequestDto;
 import com.taskmanager.niches.domain.task.dto.TaskResponseDto;
 import com.taskmanager.niches.domain.task.model.TaskEntity;
@@ -32,6 +34,12 @@ public class TaskService {
         if (existingTask != null) {
             throw new BadRequestException("Já existe uma Tarefa com este titulo para este Usúario.");
         }
+
+        CategoryEntity category = null;
+        if (taskRequestDto.getCategoryId() != null) {
+            category = categoryRepository.findById(taskRequestDto.getCategoryId())
+                    .orElseThrow(() -> new NotFoundException("Categoria não encontrada."));
+        }
         TaskEntity task = TaskEntity.builder()
                 .title(taskRequestDto.getTitle())
                 .description(taskRequestDto.getDescription())
@@ -40,6 +48,7 @@ public class TaskService {
                 .dueDate(taskRequestDto.getDueDate())
                 .createdDate(LocalDateTime.now())
                 .user(user)
+                .category(category)
                 .build();
         TaskEntity savedTask = taskRepository.save(task);
 
@@ -52,10 +61,12 @@ public class TaskService {
                 .dueDate(savedTask.getDueDate())
                 .createdDate(savedTask.getCreatedDate())
                 .userId(savedTask.getUser().getId())
+                .categoryId(savedTask.getCategory() != null ? savedTask.getCategory().getId() : null)
                 .build();
     }
+
     public List<TaskResponseDto> findAllByUserId(Integer userId) throws NotFoundException {
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Usuário não encontrado.");
         }
         List<TaskEntity> tasks = taskRepository.findAllByUserId(userId);
@@ -85,7 +96,19 @@ public class TaskService {
                 .map(task -> TaskResponseDto.builder()
                         .id(task.getId())
                         .title(task.getTitle())
+                        .description(task.getDescription())
+                        .priority(task.getPriority())
+                        .status(task.getStatus())
+                        .dueDate(task.getDueDate())
+                        .createdDate(task.getCreatedDate())
+                        .userId(task.getUser().getId())
 
-
+                        .category(task.getCategory() != null ? CategoryResponseDto.builder()
+                                .id(task.getCategory().getId())
+                                .name(task.getCategory().getName())
+                                .userId(task.getCategory().getUser().getId())
+                                .build() : null)
+                        .build())
+                .toList();
     }
 }

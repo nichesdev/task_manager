@@ -26,5 +26,6 @@ public class TaskRequestDto {
     private LocalDate dueDate;
     @NotNull
     private Integer userId;
+    private Integer categoryId;
 
 }
