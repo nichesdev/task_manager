@@ -5,6 +5,8 @@ import com.taskmanager.niches.domain.category.CategoryRepository;
 import com.taskmanager.niches.domain.category.CategoryResponseDto;
 import com.taskmanager.niches.domain.task.dto.TaskRequestDto;
 import com.taskmanager.niches.domain.task.dto.TaskResponseDto;
+import com.taskmanager.niches.domain.task.model.Priority;
+import com.taskmanager.niches.domain.task.model.StatusTaskEntity;
 import com.taskmanager.niches.domain.task.model.TaskEntity;
 import com.taskmanager.niches.domain.task.repository.TaskRepository;
 import com.taskmanager.niches.domain.users.UserEntity;
@@ -91,6 +93,46 @@ public class TaskService {
             throw new NotFoundException("Categoria não encontrada");
         }
         List<TaskEntity> tasks = taskRepository.findAllByUserIdAndCategoryId(userId, categoryId);
+
+        return tasks.stream()
+                .map(task -> TaskResponseDto.builder()
+                        .id(task.getId())
+                        .title(task.getTitle())
+                        .description(task.getDescription())
+                        .priority(task.getPriority())
+                        .status(task.getStatus())
+                        .dueDate(task.getDueDate())
+                        .createdDate(task.getCreatedDate())
+                        .userId(task.getUser().getId())
+                        .categoryId(task.getCategory() != null ? task.getCategory().getId() : null)
+                        .build())
+                .toList();
+    }
+    public List<TaskResponseDto> findAllByUserIdAndStatus (Integer userId, StatusTaskEntity status) throws NotFoundException {
+        if(!userRepository.existsById(userId)) {
+            throw new NotFoundException("Usuário não encontrado");
+        }
+        List<TaskEntity> tasks = taskRepository.findAllByUserIdAndStatus(userId, status);
+
+        return tasks.stream()
+                .map(task -> TaskResponseDto.builder()
+                        .id(task.getId())
+                        .title(task.getTitle())
+                        .description(task.getDescription())
+                        .priority(task.getPriority())
+                        .status(task.getStatus())
+                        .dueDate(task.getDueDate())
+                        .createdDate(task.getCreatedDate())
+                        .userId(task.getUser().getId())
+                        .categoryId(task.getCategory() != null ? task.getCategory().getId() : null)
+                        .build())
+                .toList();
+    }
+    public List<TaskResponseDto> findAllByUserIdAndPriority (Integer userId, Priority priority) throws NotFoundException {
+        if(!userRepository.existsById(userId)) {
+            throw new NotFoundException("Usuário não encontrado");
+        }
+        List<TaskEntity> tasks = taskRepository.findAllByUserIdAndPriority(userId, priority);
 
         return tasks.stream()
                 .map(task -> TaskResponseDto.builder()

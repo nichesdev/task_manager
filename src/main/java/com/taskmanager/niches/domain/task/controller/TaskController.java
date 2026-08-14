@@ -2,6 +2,8 @@ package com.taskmanager.niches.domain.task.controller;
 
 import com.taskmanager.niches.domain.task.dto.TaskRequestDto;
 import com.taskmanager.niches.domain.task.dto.TaskResponseDto;
+import com.taskmanager.niches.domain.task.model.Priority;
+import com.taskmanager.niches.domain.task.model.StatusTaskEntity;
 import com.taskmanager.niches.domain.task.service.TaskService;
 import com.taskmanager.niches.exception.BadRequestException;
 import com.taskmanager.niches.exception.NotFoundException;
@@ -39,6 +41,20 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<TaskResponseDto>> getByUserIdAndCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) throws NotFoundException {
         List<TaskResponseDto> tasks = taskService.findAllByUserIdAndCategoryId(userId,categoryId);
+        return  ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/user/{userId}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TaskResponseDto>> getByUserIdAndStatus(@PathVariable Integer userId, @RequestParam StatusTaskEntity status) throws NotFoundException {
+        List<TaskResponseDto> tasks = taskService.findAllByUserIdAndStatus(userId, status);
+        return  ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/user/{userId}/priority")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<TaskResponseDto>> getByUserIdAndPriority(@PathVariable Integer userId, @RequestParam Priority priority) throws NotFoundException {
+        List<TaskResponseDto> tasks = taskService.findAllByUserIdAndPriority(userId, priority);
         return  ResponseEntity.ok(tasks);
     }
 }
