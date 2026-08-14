@@ -5,6 +5,8 @@ import com.taskmanager.niches.domain.category.CategoryRepository;
 import com.taskmanager.niches.domain.category.CategoryResponseDto;
 import com.taskmanager.niches.domain.task.dto.TaskRequestDto;
 import com.taskmanager.niches.domain.task.dto.TaskResponseDto;
+import com.taskmanager.niches.domain.task.dto.TaskStatusUpdateDto;
+import com.taskmanager.niches.domain.task.dto.TaskUpdateDto;
 import com.taskmanager.niches.domain.task.model.Priority;
 import com.taskmanager.niches.domain.task.model.StatusTaskEntity;
 import com.taskmanager.niches.domain.task.model.TaskEntity;
@@ -13,6 +15,7 @@ import com.taskmanager.niches.domain.users.UserEntity;
 import com.taskmanager.niches.domain.users.UserRepository;
 import com.taskmanager.niches.exception.BadRequestException;
 import com.taskmanager.niches.exception.NotFoundException;
+import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -86,10 +89,11 @@ public class TaskService {
                         .build())
                 .toList();
     }
-    public List<TaskResponseDto> findAllByUserIdAndCategoryId (Integer userId, Integer categoryId) throws NotFoundException {
-        if(!userRepository.existsById(userId)) {
+
+    public List<TaskResponseDto> findAllByUserIdAndCategoryId(Integer userId, Integer categoryId) throws NotFoundException {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Usuário não encontrado");
-        } else if(!categoryRepository.existsById(categoryId)) {
+        } else if (!categoryRepository.existsById(categoryId)) {
             throw new NotFoundException("Categoria não encontrada");
         }
         List<TaskEntity> tasks = taskRepository.findAllByUserIdAndCategoryId(userId, categoryId);
@@ -108,8 +112,9 @@ public class TaskService {
                         .build())
                 .toList();
     }
-    public List<TaskResponseDto> findAllByUserIdAndStatus (Integer userId, StatusTaskEntity status) throws NotFoundException {
-        if(!userRepository.existsById(userId)) {
+
+    public List<TaskResponseDto> findAllByUserIdAndStatus(Integer userId, StatusTaskEntity status) throws NotFoundException {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Usuário não encontrado");
         }
         List<TaskEntity> tasks = taskRepository.findAllByUserIdAndStatus(userId, status);
@@ -128,8 +133,9 @@ public class TaskService {
                         .build())
                 .toList();
     }
-    public List<TaskResponseDto> findAllByUserIdAndPriority (Integer userId, Priority priority) throws NotFoundException {
-        if(!userRepository.existsById(userId)) {
+
+    public List<TaskResponseDto> findAllByUserIdAndPriority(Integer userId, Priority priority) throws NotFoundException {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Usuário não encontrado");
         }
         List<TaskEntity> tasks = taskRepository.findAllByUserIdAndPriority(userId, priority);
@@ -147,5 +153,66 @@ public class TaskService {
                         .categoryId(task.getCategory() != null ? task.getCategory().getId() : null)
                         .build())
                 .toList();
+    }
+
+    public TaskResponseDto updateTask(Integer id, TaskUpdateDto dto) throws NotFoundException {
+        TaskEntity task = taskRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Tarefa não encontrada"));
+
+        if (dto.getTitle() != null) {
+            CategoryEntity category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+            task.setCategory(category);
+        } else {
+            task.setCategory(null);
+        }
+
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setPriority(dto.getPriority());
+        task.setStatus(dto.getStatus());
+        task.setDueDate(dto.getDueDate());
+
+        TaskEntity updatedTask = taskRepository.save(task);
+
+
+        return TaskResponseDto.builder()
+                .id(updatedTask.getId())
+                .title(updatedTask.getTitle())
+                .description(updatedTask.getDescription())
+                .priority(updatedTask.getPriority())
+                .status(updatedTask.getStatus())
+                .dueDate(updatedTask.getDueDate())
+                .createdDate(updatedTask.getCreatedDate())
+                .userId(updatedTask.getUser().getId())
+                .categoryId(updatedTask.getCategory() != null ? updatedTask.getCategory().getId() : null)
+                .build();
+    }
+    public TaskResponseDto updateStatus(Integer id, TaskStatusUpdateDto dto) throws NotFoundException {
+        TaskEntity task = taskRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Tarefa não encontrada"));
+
+        task.setStatus(dto.getStatus());
+
+        TaskEntity updatedStatus = taskRepository.save(task);
+
+        return TaskResponseDto.builder()
+                .id(updatedStatus.getId())
+                .title(updatedStatus.getTitle())
+                .description(updatedStatus.getDescription())
+                .priority(updatedStatus.getPriority())
+                .status(updatedStatus.getStatus())
+                .dueDate(updatedStatus.getDueDate())
+                .createdDate(updatedStatus.getCreatedDate())
+                .userId(updatedStatus.getUser().getId())
+                .categoryId(updatedStatus.getCategory() != null ? updatedStatus.getCategory().getId() : null)
+                .build();
+    }
+
+    public void deleteTask(Integer id) throws NotFoundException {
+        if (!taskRepository.existsById(id)) {
+            throw new NotFoundException("Tarefa não encontrada");
+        }
+        taskRepository.deleteById(id);
     }
 }

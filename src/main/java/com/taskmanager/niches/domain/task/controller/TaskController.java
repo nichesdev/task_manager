@@ -2,6 +2,8 @@ package com.taskmanager.niches.domain.task.controller;
 
 import com.taskmanager.niches.domain.task.dto.TaskRequestDto;
 import com.taskmanager.niches.domain.task.dto.TaskResponseDto;
+import com.taskmanager.niches.domain.task.dto.TaskStatusUpdateDto;
+import com.taskmanager.niches.domain.task.dto.TaskUpdateDto;
 import com.taskmanager.niches.domain.task.model.Priority;
 import com.taskmanager.niches.domain.task.model.StatusTaskEntity;
 import com.taskmanager.niches.domain.task.service.TaskService;
@@ -56,5 +58,25 @@ public class TaskController {
     public ResponseEntity<List<TaskResponseDto>> getByUserIdAndPriority(@PathVariable Integer userId, @RequestParam Priority priority) throws NotFoundException {
         List<TaskResponseDto> tasks = taskService.findAllByUserIdAndPriority(userId, priority);
         return  ResponseEntity.ok(tasks);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Integer id, @Valid @RequestBody TaskUpdateDto taskUpdateDto) throws NotFoundException {
+        TaskResponseDto updatedTask = taskService.updateTask(id, taskUpdateDto);
+        return ResponseEntity.ok(updatedTask);
+    }
+
+    @PatchMapping("/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<TaskResponseDto> updateStatus(@PathVariable Integer id, @Valid @RequestBody TaskStatusUpdateDto taskStatusUpdateDto) throws NotFoundException {
+        TaskResponseDto updatedTask = taskService.updateStatus(id, taskStatusUpdateDto);
+        return ResponseEntity.ok(updatedTask);
+    }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteTask(@PathVariable Integer id) throws NotFoundException {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
     }
 }
