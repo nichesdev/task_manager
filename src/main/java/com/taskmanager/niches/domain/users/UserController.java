@@ -8,16 +8,23 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/signup")
+@RequestMapping("/v1/auth")
 @RequiredArgsConstructor
 @Validated
 public class UserController {
 
-    private final UserService userService;
+    private final UserAuthService userService;
 
-    @PostMapping
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponseDto createUser(@Valid @RequestBody UserRequestDto userRequestDto) throws BadRequestException {
-        return userService.createUser(userRequestDto);
+    public void register(@Valid @RequestBody UserRequestDto userRequestDto) throws BadRequestException {
+        userService.register(userRequestDto);
     }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public void login(@Valid @RequestBody LoginRequestDto loginRequestDto) throws BadRequestException {
+        userService.login(loginRequestDto);
+    }
+
 }

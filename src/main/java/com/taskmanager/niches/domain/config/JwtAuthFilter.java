@@ -1,4 +1,4 @@
-package com.taskmanager.niches.config;
+package com.taskmanager.niches.domain.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

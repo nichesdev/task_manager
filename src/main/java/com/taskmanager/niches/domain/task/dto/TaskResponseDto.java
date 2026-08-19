@@ -3,7 +3,6 @@ package com.taskmanager.niches.domain.task.dto;
 
 import com.taskmanager.niches.domain.task.model.Priority;
 import com.taskmanager.niches.domain.task.model.StatusTaskEntity;
-import com.taskmanager.niches.domain.users.UserResponseDto;
 import lombok.*;
 
 import java.time.LocalDate;
