@@ -1,0 +1,68 @@
+package com.taskmanager.niches.config;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import lombok.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+@Component
+public class TokenProvider {
+
+    @Value("${jwt.expiration}")
+    private long expirationTime;
+
+    @Value("${jwt.key}")
+    private String key;
+
+    // gerar um token
+    public String gerarToken (Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return buildToken(userDetails.getUsername());
+    }
+
+    private String buildToken (String username) {
+        Date now = new Date();
+        Date expiration = new Date (now.getTime() + expirationTime);
+
+        return Jwts.builder()
+                .subject(username)
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(getSigninKey())
+                .compact();
+    }
+
+    // validar um token
+    public boolean isTokenValid (String token) {
+        try {
+            getClaims(token);
+            return true;
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    // extrair infos do token
+    public String getUsernameFromToken(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    private Claims getClaims (String token) {
+        // validar assinatura
+        // validar expiração=
+        return Jwts.parser()
+                .verifyWith(getSigninKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+    private SecretKey getSigninKey() {
+        return Keys.hmacShaKeyFor(key.getBytes());
+    }
+}

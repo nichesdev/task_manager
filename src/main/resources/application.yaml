@@ -16,3 +16,7 @@ spring:
       hibernate:
         default_schema: app
         format_sql: true
+
+jwt:
+  expiration: ${JWT_EXPIRATION:900000} #15 minutos
+  key: ${JWT_KEY:$BfLv$RjTpzo06BdnT4f2bOQ8Xx!XoxDAWoXiGKdUnItSP5P2HrNkjZTvj6HTg05dagybyaiFGHC4ZA7bPzaIkQipUL56TdY8a_$wHf9dIJj0gw!0zqBa9dN9nV8Wxz0#aAQNPU7v3vhDds9!5kt6ybBHs3hbwKp12uLQc#e5BVpCSOdH2OB1QusymYGT54B5LWeDsI0hm3qnfMK8vB$cAD4lVc9sF3DeqM!#8SkjQbaGqq49f2ThOPD75GVXfbAOtzdxAmx4L7GQ6Bp$nionyjVJQ4YUhi9l#Kgy&!phzvEs$mcHl!tPnDN5xNVcWcCwI9$lG#rewgKFnV23&nrLJ_X}
