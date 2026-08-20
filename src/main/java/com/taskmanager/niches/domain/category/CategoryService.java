@@ -13,12 +13,12 @@ public class CategoryService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
-    public CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto) throws NotFoundException, BadRequestException {
-        UserEntity user = userRepository.findById(categoryRequestDto.getUserId())
+    public CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto, String userEmail) throws NotFoundException, BadRequestException {
+        UserEntity user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
 
         CategoryEntity existingCategory = categoryRepository
-                .findByNameAndUserId(categoryRequestDto.getCategoryName(), categoryRequestDto.getUserId())
+                .findByNameAndUserId(categoryRequestDto.getCategoryName(), user.getId())
                 .orElse(null);
         if (existingCategory != null) {
             throw new BadRequestException("Já existe uma categoria com este titulo para este Usuário.");

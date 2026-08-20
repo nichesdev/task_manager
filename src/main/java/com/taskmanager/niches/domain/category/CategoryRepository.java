@@ -8,5 +8,7 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Integer> {
     Optional<CategoryEntity> findByNameAndUserId(String name, Integer userId);
 
+    Optional<CategoryEntity> findByIdAndUserId(Integer id, Integer userId);
+
     List<CategoryEntity> findAllByUserId(Integer userId);
 }

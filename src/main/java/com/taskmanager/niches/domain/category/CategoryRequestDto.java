@@ -14,7 +14,5 @@ public class CategoryRequestDto {
 
     @NotBlank
     private String categoryName;
-    @NotNull
-    private Integer userId;
 
 }

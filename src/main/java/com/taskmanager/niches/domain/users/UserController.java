@@ -4,6 +4,7 @@ import com.taskmanager.niches.exception.BadRequestException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,8 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public void login(@Valid @RequestBody LoginRequestDto loginRequestDto) throws BadRequestException {
-        userService.login(loginRequestDto);
+    public TokenResponseDto login(@Valid @RequestBody LoginRequestDto loginRequestDto) throws BadRequestException {
+        return userService.login(loginRequestDto);
     }
 
 }

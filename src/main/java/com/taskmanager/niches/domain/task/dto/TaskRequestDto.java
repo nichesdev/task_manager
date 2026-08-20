@@ -24,8 +24,6 @@ public class TaskRequestDto {
     @NotNull
     private StatusTaskEntity status;
     private LocalDate dueDate;
-    @NotNull
-    private Integer userId;
     private Integer categoryId;
 
 }

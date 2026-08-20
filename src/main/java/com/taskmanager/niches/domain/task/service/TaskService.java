@@ -29,12 +29,12 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
 
-    public TaskResponseDto createTask(TaskRequestDto taskRequestDto) throws NotFoundException, BadRequestException {
-        UserEntity user = userRepository.findById(taskRequestDto.getUserId())
+    public TaskResponseDto createTask(TaskRequestDto taskRequestDto, String userEmail) throws NotFoundException, BadRequestException {
+        UserEntity user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User não encontrado."));
 
         TaskEntity existingTask = taskRepository
-                .findByTitleAndUserId(taskRequestDto.getTitle(), taskRequestDto.getUserId())
+                .findByTitleAndUserId(taskRequestDto.getTitle(), user.getId())
                 .orElse(null);
         if (existingTask != null) {
             throw new BadRequestException("Já existe uma Tarefa com este titulo para este Usúario.");
@@ -42,7 +42,7 @@ public class TaskService {
 
         CategoryEntity category = null;
         if (taskRequestDto.getCategoryId() != null) {
-            category = categoryRepository.findById(taskRequestDto.getCategoryId())
+            category = categoryRepository.findByIdAndUserId(taskRequestDto.getCategoryId(), user.getId())
                     .orElseThrow(() -> new NotFoundException("Categoria não encontrada."));
         }
         TaskEntity task = TaskEntity.builder()
