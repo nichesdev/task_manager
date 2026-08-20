@@ -90,13 +90,14 @@ public class TaskService {
                 .toList();
     }
 
-    public List<TaskResponseDto> findAllByUserIdAndCategoryId(Integer userId, Integer categoryId) throws NotFoundException {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("Usuário não encontrado");
-        } else if (!categoryRepository.existsById(categoryId)) {
-            throw new NotFoundException("Categoria não encontrada");
-        }
-        List<TaskEntity> tasks = taskRepository.findAllByUserIdAndCategoryId(userId, categoryId);
+    public List<TaskResponseDto> findAllByUserIdAndCategoryId(Integer categoryId, String userEmail) throws NotFoundException {
+        UserEntity user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
+
+        CategoryEntity category = categoryRepository.findByIdAndUserId(categoryId, user.getId())
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada para este usuário"));
+
+        List<TaskEntity> tasks = taskRepository.findAllByUserIdAndCategoryId(user.getId(), category.getId());
 
         return tasks.stream()
                 .map(task -> TaskResponseDto.builder()
@@ -155,17 +156,12 @@ public class TaskService {
                 .toList();
     }
 
-    public TaskResponseDto updateTask(Integer id, TaskUpdateDto dto) throws NotFoundException {
-        TaskEntity task = taskRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Tarefa não encontrada"));
+    public TaskResponseDto updateTask(Integer id, TaskUpdateDto dto, String userEmail) throws NotFoundException {
+        UserEntity user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
 
-        if (dto.getTitle() != null) {
-            CategoryEntity category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
-            task.setCategory(category);
-        } else {
-            task.setCategory(null);
-        }
+        TaskEntity task = taskRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new NotFoundException("Tarefa não encontrada."));
 
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
@@ -173,8 +169,15 @@ public class TaskService {
         task.setStatus(dto.getStatus());
         task.setDueDate(dto.getDueDate());
 
-        TaskEntity updatedTask = taskRepository.save(task);
+        if (dto.getCategoryId() != null) {
+            CategoryEntity category = categoryRepository.findByIdAndUserId(dto.getCategoryId(), user.getId())
+                    .orElseThrow(() -> new NotFoundException("Categoria não encontrada."));
+            task.setCategory(category);
+        } else {
+            task.setCategory(null);
+        }
 
+        TaskEntity updatedTask = taskRepository.save(task);
 
         return TaskResponseDto.builder()
                 .id(updatedTask.getId())
@@ -188,12 +191,15 @@ public class TaskService {
                 .categoryId(updatedTask.getCategory() != null ? updatedTask.getCategory().getId() : null)
                 .build();
     }
-    public TaskResponseDto updateStatus(Integer id, TaskStatusUpdateDto dto) throws NotFoundException {
-        TaskEntity task = taskRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Tarefa não encontrada"));
+
+    public TaskResponseDto updateStatus(Integer id, TaskStatusUpdateDto dto, String userEmail) throws NotFoundException {
+        UserEntity user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
+
+        TaskEntity task = taskRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new NotFoundException("Tarefa não encontrada."));
 
         task.setStatus(dto.getStatus());
-
         TaskEntity updatedStatus = taskRepository.save(task);
 
         return TaskResponseDto.builder()
@@ -209,11 +215,14 @@ public class TaskService {
                 .build();
     }
 
-    public void deleteTask(Integer id) throws NotFoundException {
-        if (!taskRepository.existsById(id)) {
-            throw new NotFoundException("Tarefa não encontrada");
-        }
-        taskRepository.deleteById(id);
+    public void deleteTask(Integer id, String userEmail) throws NotFoundException {
+        UserEntity user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
+
+        TaskEntity task = taskRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new NotFoundException("Tarefa não encontrada."));
+
+        taskRepository.delete(task);
     }
 }
 

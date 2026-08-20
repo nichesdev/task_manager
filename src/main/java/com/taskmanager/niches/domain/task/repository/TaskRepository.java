@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
     Optional<TaskEntity> findByTitleAndUserId(String title, Integer userId);
+    Optional<TaskEntity> findByIdAndUserId(Integer id, Integer userId);
 
     List<TaskEntity> findAllByUserId(Integer userId);
     List<TaskEntity> findAllByUserIdAndCategoryId(Integer userId, Integer categoryId);

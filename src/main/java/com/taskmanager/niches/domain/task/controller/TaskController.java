@@ -43,11 +43,10 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id")
-    @GetMapping("/user/{userId}/category/{categoryId}")
+    @GetMapping("/category/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<TaskResponseDto>> getByUserIdAndCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) throws NotFoundException {
-        List<TaskResponseDto> tasks = taskService.findAllByUserIdAndCategoryId(userId,categoryId);
+    public ResponseEntity<List<TaskResponseDto>> getByUserIdAndCategory(@PathVariable Integer categoryId, Authentication authentication) throws NotFoundException {
+        List<TaskResponseDto> tasks = taskService.findAllByUserIdAndCategoryId(categoryId, authentication.getName());
         return  ResponseEntity.ok(tasks);
     }
 
@@ -67,27 +66,24 @@ public class TaskController {
         return  ResponseEntity.ok(tasks);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Integer id, @Valid @RequestBody TaskUpdateDto taskUpdateDto) throws NotFoundException {
-        TaskResponseDto updatedTask = taskService.updateTask(id, taskUpdateDto);
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Integer id, @Valid @RequestBody TaskUpdateDto taskUpdateDto, Authentication authentication) throws NotFoundException {
+        TaskResponseDto updatedTask = taskService.updateTask(id, taskUpdateDto, authentication.getName());
         return ResponseEntity.ok(updatedTask);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id")
     @PatchMapping("/{id}/status")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<TaskResponseDto> updateStatus(@PathVariable Integer id, @Valid @RequestBody TaskStatusUpdateDto taskStatusUpdateDto) throws NotFoundException {
-        TaskResponseDto updatedTask = taskService.updateStatus(id, taskStatusUpdateDto);
+    public ResponseEntity<TaskResponseDto> updateStatus(@PathVariable Integer id, @Valid @RequestBody TaskStatusUpdateDto taskStatusUpdateDto, Authentication authentication) throws NotFoundException {
+        TaskResponseDto updatedTask = taskService.updateStatus(id, taskStatusUpdateDto, authentication.getName());
         return ResponseEntity.ok(updatedTask);
     }
 
-    @PreAuthorize("#userId == authentication.principal.id")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteTask(@PathVariable Integer id) throws NotFoundException {
-        taskService.deleteTask(id);
+    public ResponseEntity<Void> deleteTask(@PathVariable Integer id, Authentication authentication) throws NotFoundException {
+        taskService.deleteTask(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 }
