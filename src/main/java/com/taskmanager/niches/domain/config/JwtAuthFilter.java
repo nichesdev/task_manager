@@ -30,7 +30,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
-            //validar token
             String token = authorizationHeader.substring(7);
 
             if(tokenProvider.isTokenValid(token)) {

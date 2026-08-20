@@ -77,86 +77,91 @@ Com a aplicação rodando, acesse no navegador:
 
 ## 📌 Endpoints da API
 
-> **Aviso:** Todos os endpoints sob `/v1/tasks` e `/v1/categories` necessitam do cabeçalho `Authorization: Bearer <TOKEN_JWT>`.
+> **Aviso:** Todos os endpoints sob `/v1/tasks` e `/v1/categories` necessitam do cabeçalho HTTP: `Authorization: Bearer <TOKEN_JWT>`.
 
-### 🔐 Autenticação
+### 🔐 Autenticação (User Controller)
 
 | Método | Endpoint | Descrição | Autenticação |
 |---|---|---|---|
-| `POST` | `/v1/auth/register` | Cadastro de novo usuário | Pública |
-| `POST` | `/v1/auth/login` | Autenticação e geração do token JWT | Pública |
+| `POST` | `/v1/auth/register` | Criação de um novo usuário | Pública |
+| `POST` | `/v1/auth/login` | Login e geração de JWT | Pública |
 
+#### Payload de Registro (`POST /v1/auth/register`):
 ```json
-// POST /v1/auth/login
 {
-  "email": "dev@exemplo.com",
-  "password": "senhaSegura123"
+    "username": "Enzo Nascimento",
+    "email": "enzonascimento@gmail.com",
+    "password": "enzo1234"
+}
+```
+
+#### Payload de Login (`POST /v1/auth/login`):
+```json
+{
+    "email": "enzoniches@gmail.com",
+    "password": "enzo1234"
 }
 ```
 
 ---
 
-### 📂 Categorias
+### 📂 Categorias (Category Controller)
 
 | Método | Endpoint | Descrição | Autenticação |
 |---|---|---|---|
-| `POST` | `/v1/categories` | Cria uma categoria para o usuário | Bearer JWT |
-| `GET` | `/v1/categories` | Lista todas as categorias do usuário | Bearer JWT |
-| `GET` | `/v1/categories/{id}` | Detalhes de uma categoria por ID | Bearer JWT |
-| `DELETE` | `/v1/categories/{id}` | Remove uma categoria | Bearer JWT |
+| `POST` | `/v1/categories` | Cria uma categoria (valida usuário via JWT) | Bearer JWT |
 
+#### Payload de Criação (`POST /v1/categories`):
 ```json
-// POST /v1/categories
 {
-  "name": "Estudos"
+    "categoryName": "tem que pertencer ao user 1"
 }
 ```
 
 ---
 
-### 📝 Tarefas
+### 📝 Tarefas (Task Controller)
 
 | Método | Endpoint | Descrição | Autenticação |
 |---|---|---|---|
-| `POST` | `/v1/tasks` | Cria uma nova tarefa associada ao usuário | Bearer JWT |
-| `GET` | `/v1/tasks` | Lista todas as tarefas do usuário | Bearer JWT |
-| `GET` | `/v1/tasks/{id}` | Busca tarefa por ID | Bearer JWT |
-| `GET` | `/v1/tasks/category/{categoryId}` | Lista tarefas do usuário por categoria | Bearer JWT |
-| `GET` | `/v1/tasks/status?status={STATUS}` | Lista tarefas filtradas por status | Bearer JWT |
-| `GET` | `/v1/tasks/priority?priority={PRIORIDADE}` | Lista tarefas filtradas por prioridade | Bearer JWT |
-| `PUT` | `/v1/tasks/{id}` | Atualização completa dos dados da tarefa | Bearer JWT |
-| `PATCH` | `/v1/tasks/{id}/status` | Atualiza somente o status da tarefa | Bearer JWT |
-| `DELETE` | `/v1/tasks/{id}` | Deleta uma tarefa | Bearer JWT |
+| `POST` | `/v1/tasks` | Cria tarefa (valida IDOR de categoria via JWT) | Bearer JWT |
+| `GET` | `/v1/tasks/user/{userId}` | Lista tarefas pelo ID do usuário | Bearer JWT |
+| `GET` | `/v1/tasks/category/{categoryId}` | Lista tarefas pela categoria | Bearer JWT |
+| `GET` | `/v1/tasks/user/{userId}/priority?priority={PRIORIDADE}` | Lista tarefas por prioridade | Bearer JWT |
+| `PUT` | `/v1/tasks/{id}` | Altera informações da tarefa | Bearer JWT |
+| `PATCH` | `/v1/tasks/{id}/status` | Altera status da tarefa | Bearer JWT |
+| `DELETE` | `/v1/tasks/{id}` | Deleta tarefa | Bearer JWT |
 
 #### Payload de Criação (`POST /v1/tasks`):
 ```json
 {
-  "title": "Refatorar camada de segurança",
-  "description": "Remover vulnerabilidades IDOR e padronizar DTOs",
-  "priority": "ALTA",
-  "status": "EM_ANDAMENTO",
-  "dueDate": "2026-08-30",
-  "categoryId": 1
+    "title": "Testando PUT userid 2",
+    "description": "Ajustes finais Backend",
+    "priority": "ALTA",
+    "status": "EM_ANDAMENTO",
+    "dueDate": "2026-08-25",
+    "categoryId": 1
+}
+```
+
+#### Payload de Atualização Completa (`PUT /v1/tasks/{id}`):
+```json
+{
+    "title": "ALTERAÇÃO?",
+    "description": "NÃO VIRA IDOR HUHUHUHUHU",
+    "priority": "MEDIA",
+    "status": "EM_ANDAMENTO",
+    "dueDate": "2026-08-25T12:00:00",
+    "categoryId": 1
 }
 ```
 
 #### Payload de Atualização de Status (`PATCH /v1/tasks/{id}/status`):
 ```json
 {
-  "status": "CONCLUIDA"
+    "status": "CONCLUIDA"
 }
 ```
-
----
-
-## 🧪 Testes Automatizados
-
-Para executar os testes com **JUnit 5** e **Mockito**:
-
-```bash
-./mvnw test
-```
-
 ---
 
 ## 👤 Autor
