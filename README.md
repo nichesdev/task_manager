@@ -107,7 +107,4 @@ Aplicação: `http://localhost:8080` · Swagger UI: `http://localhost:8080/swagg
 // status (PATCH)
 { "status": "CONCLUIDA" }
 ```
-
-## Autor
-
-[nichesdev](https://github.com/nichesdev)
+---
